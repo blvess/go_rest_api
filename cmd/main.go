@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	transportHTTP "vess/go_rest_api/internal/transport/http"
+)
 
 // App contains pointers to database connections
 type App struct{}
@@ -8,6 +13,14 @@ type App struct{}
 // Run starts the REST App server
 func (app *App) Run() error {
 	fmt.Println("Setting up App")
+	handler := transportHTTP.NewHandler()
+	handler.SetupRoutes()
+
+	if err := http.ListenAndServe(":8080", handler.Router); err != nil {
+		fmt.Println("Failed to setup server")
+		return err
+	}
+
 	return nil
 }
 
